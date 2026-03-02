@@ -18,8 +18,11 @@ jobs:
 security_test:
   needs: [deploy]
   runs-on: ubuntu-latest
+  steps: 
+    - name: ZAP Baseline Scan
+  uses: zaproxy/action-baseline@v0.15.0
 deploy:
-#   needs: [function_test] (normally you'd not deploy until functional tests were complete)
+#  needs: [function_test] (normally you'd not deploy until functional tests were complete)
   runs-on: ubuntu-latest
   - name: ZAP Baseline Scan
     uses: zaproxy/action-baseline@v0.15.0

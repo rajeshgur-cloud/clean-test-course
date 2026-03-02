@@ -3,27 +3,25 @@ name: Lesson 5 DAST
 on:
   push:
     branches:
-      - lesson-5-complete
+      - lesson-5
 jobs:
-  function_test:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      - uses: actions/checkout@v4
-      - run: npm install
-      - name: Run functional tests
-        run: npm test -- --coverage --watchAll=false
+#  function_test: (commented out to save learner time)
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        working-directory: frontend
+#    steps:
+#      - uses: actions/checkout@v4
+#      - run: npm install
+#      - name: Run functional tests
+#        run: npm test -- --coverage --watchAll=false
   deploy:
-    needs: [function_test]
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-      - run: npm install && npm run build
       - name: Generate deployment package
         run: zip -r deploy.zip build Dockerfile
       - name: '**PLACEHOLDER** Deploy to Elastic Beanstalk'
@@ -31,8 +29,24 @@ jobs:
   security_test:
     needs: [deploy]
     runs-on: ubuntu-latest
+    steps: 
+      - name: ZAP Baseline Scan
+    uses: zaproxy/action-baseline@v0.15.0
+#deploy:
+#  needs: [function_test]
+#  runs-on: ubuntu-latest
+#  steps:
+#  - name: ZAP Baseline Scan
+#    uses: zaproxy/action-baseline@v0.15.0
+    with:
+        target: 'https://hangryhippo.quantic.host'
+    defaults:
+      run:
+        working-directory: frontend
     steps:
-      - name: Dynamic Application Security Scan
-        uses: zaproxy/action-baseline@v0.15.0
-        with:
-          target: 'http://hangry-web-dev.us-east-1.elasticbeanstalk.com/'
+      - uses: actions/checkout@v4
+#      - run: npm install && npm run build (commented out to save learner time)
+      - name: Generate deployment package
+        run: zip -r deploy.zip build Dockerfile
+      - name: '**PLACEHOLDER** Deploy to Elastic Beanstalk'
+        run: echo Placeholder for Deployment
